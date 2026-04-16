@@ -221,14 +221,14 @@ MYSQL_PORT=3306
 
 | Role         | Email                        | Password         |
 |--------------|------------------------------|------------------|
-| Super Admin  | superadmin@gyanpustak.com    | superadmin@123   |
-| Admin 1      | admin1@gyanpustak.com        | admin1@123       |
-| Admin 2      | admin2@gyanpustak.com        | admin2@123       |
-| Support 1    | support1@gyanpustak.com      | support1@123     |
-| Support 2    | support2@gyanpustak.com      | support2@123     |
-| Student 1    | student1@gyanpustak.com      | student1@123     |
-| Student 2    | student2@gyanpustak.com      | student2@123     |
-| Student 3    | student3@gyanpustak.com      | student3@123     |
+| Super Admin  | superadmin@gyanpustak.com    | SuperAdmin@123   |
+| Admin 1      | admin1@gyanpustak.com        | Admin@123       |
+| Admin 2      | admin2@gyanpustak.com        | Admin@123       |
+| Support 1    | support1@gyanpustak.com      | Support@123     |
+| Support 2    | support2@gyanpustak.com      | Support@123     |
+| Student 1    | student1@gyanpustak.com      | Student@123     |
+| Student 2    | student2@gyanpustak.com      | Student@123     |
+| Student 3    | student3@gyanpustak.com      | Student@123     |
 
 ---
 
