@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Ticket #{{ ticket.id }} - GyanPustak{% endblock %}
+{% block content %}
+<a href="{{ url_for('admin.tickets') }}" class="btn btn-secondary btn-sm" style="width:auto;margin-bottom:1.5rem;display:inline-block;">← Back to Tickets</a>
+
+<div class="form-container" style="max-width:100%;margin-bottom:1.5rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+        <h2 style="margin:0;">#{{ ticket.id }}: {{ ticket.title }}</h2>
+        <span class="badge badge-{{ ticket.status }}">{{ ticket.status }}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+        <p><strong>Creator:</strong> {{ ticket.creator_email }}</p>
+        <p><strong>Category:</strong> {{ ticket.category }}</p>
+        <p><strong>Date Logged:</strong> {{ ticket.date_logged }}</p>
+        {% if ticket.assigned_admin_id %}
+        {% endif %}
+    </div>
+    <div style="margin-bottom:1rem;">
+        <h3 style="font-size:1rem;margin-bottom:0.5rem;">📝 Problem Description</h3>
+        <div style="background:var(--bg-glass,rgba(255,255,255,0.03));border:1px solid var(--glass-border,rgba(255,255,255,0.08));border-radius:var(--radius-md,0.5rem);padding:1rem;">
+            {{ ticket.problem }}
+        </div>
+    </div>
+    {% if ticket.solution %}
+    <div style="margin-bottom:1rem;">
+        <h3 style="font-size:1rem;margin-bottom:0.5rem;">✅ Solution</h3>
+        <div style="background:var(--bg-glass,rgba(255,255,255,0.03));border:1px solid var(--glass-border,rgba(255,255,255,0.08));border-radius:var(--radius-md,0.5rem);padding:1rem;">
+            {{ ticket.solution }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if ticket.status == 'assigned' %}
+<div class="form-container" style="max-width:100%;margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:1rem;">🚀 Start Working on this Ticket</h3>
+    <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">Change the status to "In Process" to indicate you are actively working on this ticket.</p>
+    <form method="POST" action="{{ url_for('admin.update_ticket', ticket_id=ticket.id) }}">
+        <input type="hidden" name="new_status" value="in-process">
+        <button type="submit" class="btn btn-primary" style="width:auto;">Start Processing →</button>
+    </form>
+</div>
+{% elif ticket.status == 'in-process' %}
+<div class="form-container" style="max-width:100%;margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:1rem;">✅ Complete this Ticket</h3>
+    <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">Describe the solution below and mark this ticket as completed.</p>
+    <form method="POST" action="{{ url_for('admin.update_ticket', ticket_id=ticket.id) }}">
+        <input type="hidden" name="new_status" value="completed">
+        <div class="form-group">
+            <label>Solution Description *</label>
+            <textarea name="solution" rows="4" placeholder="Describe how the issue was resolved..." required style="width:100%;">{{ ticket.solution or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:auto;">Mark as Completed ✓</button>
+    </form>
+</div>
+{% endif %}
+
+
+{% endblock %}

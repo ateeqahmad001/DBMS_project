@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GyanPustak{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    {% if session.get('role') == 'student' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/student.css') }}">
+    {% elif session.get('role') == 'admin' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/admin.css') }}">
+    {% elif session.get('role') == 'support' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/support.css') }}">
+    {% elif session.get('role') == 'superadmin' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/superadmin.css') }}">
+    {% endif %}
+</head>
+<body class="role-{{ session.get('role', 'guest') }}">
+<!-- Ambient Glow Orbs -->
+<div class="glow-orbs">
+    <div class="glow-orb"></div>
+    <div class="glow-orb"></div>
+    <div class="glow-orb"></div>
+</div>
+<!-- Role-based background animation container -->
+<div class="role-bg-animation" id="roleBgAnimation"></div>
+{% block body %}{% endblock %}
+<!-- Scripts -->
+<script>
+document.querySelectorAll('.btn-primary').forEach(function(btn) {
+    btn.addEventListener('mousemove', function(e) {
+        var rect = btn.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width / 2;
+        var y = e.clientY - rect.top - rect.height / 2;
+        if (Math.sqrt(x*x+y*y) < 100) {
+            btn.style.transform = 'translate('+(x*0.15)+'px,'+(y*0.15)+'px)';
+        }
+    });
+    btn.addEventListener('mouseleave', function() { btn.style.transform = ''; });
+});
+document.querySelectorAll('.stat-card .value, .counter-value').forEach(function(el) {
+    var target = parseInt(el.textContent) || 0;
+    if (target <= 0) return;
+    var current = 0, step = Math.max(1, Math.floor(target / 30));
+    var timer = setInterval(function() {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current;
+    }, 30);
+});
+// Support role: wave reacts to mouse
+if (document.body.classList.contains('role-support')) {
+    var waveBg = document.getElementById('roleBgAnimation');
+    if (waveBg) {
+        document.addEventListener('mousemove', function(e) {
+            var x = (e.clientX / window.innerWidth) * 100;
+            var y = (e.clientY / window.innerHeight) * 100;
+            waveBg.style.setProperty('--mouse-x', x + '%');
+            waveBg.style.setProperty('--mouse-y', y + '%');
+        });
+    }
+}
+</script>
+</body>
+</html>

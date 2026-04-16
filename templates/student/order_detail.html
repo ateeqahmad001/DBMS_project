@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} - GyanPustak{% endblock %}
+{% block content %}
+<h1 style = "margin-bottom:1.5rem;">📦 Order #{{ order.id }}</h1>
+<div class="order-info">
+    <p><strong>Date:</strong> {{ order.order_date }}</p>
+    <p><strong>Status:</strong> <span class="badge badge-{{ order.order_status }}">{{ order.order_status }}</span></p>
+    <p><strong>Shipping:</strong> {{ order.shipping_type }}</p>
+    <p><strong>Total:</strong> <span style="color:var(--cyan);font-weight:700;font-size:1.1rem;">₹{{ order.total_amount }}</span></p>
+</div>
+<h3>📋 Items</h3>
+<table class="table">
+    <thead><tr><th>Book</th><th>Qty</th><th>Price</th><th>Type</th><th></th></tr></thead>
+    <tbody>
+    {% for item in order['items'] %}
+    <tr>
+        <td style="color:var(--text-primary);font-weight:500;">{{ item.title }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ item.price }}</td>
+        <td><span class="badge badge-{{ 'new' if not item.is_rental else 'assigned' }}">{{ 'Rent' if item.is_rental else 'Buy' }}</span></td>
+        <td>{% if order.order_status == 'completed' %}
+        <form method="POST" action="{{ url_for('student.review_book', order_id=order.id, book_id=item.book_id) }}" style="display:inline" class="inline-form">
+            <select name="rating" style="background:var(--bg-glass);border:1.5px solid var(--glass-border);border-radius:var(--radius-sm);color:var(--text-primary);padding:0.4rem 0.6rem;font-family:var(--font);">
+                <option value="5" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐⭐⭐ 5</option>
+                <option value="4" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐⭐ 4</option>
+                <option value="3" selected style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐ 3</option>
+                <option value="2" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐ 2</option>
+                <option value="1" style="background:var(--bg-elevated);color:var(--text-primary);">⭐ 1</option>
+            </select>
+            <input type="text" name="review_text" placeholder="Write your review...">
+            <button class="btn btn-sm btn-primary">Review</button>
+        </form>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% set cancellation_rejected = order.cancellation and order.cancellation.decision == 'rejected' %}
+
+{% if order.order_status in ('new','processed','awaiting_shipping') and not cancellation_rejected %}
+<div class="cancel-form" style="margin-top:1.5rem;">
+    <h3>❌ Request Cancellation</h3>
+    <form method="POST" action="{{ url_for('student.cancel_order', order_id=order.id) }}">
+        <div class="form-group"><label>Reason for cancellation *</label><textarea name="reason" required placeholder="Please explain why you want to cancel this order..."></textarea></div>
+        <button type="submit" class="btn btn-danger">Request Cancellation</button>
+    </form>
+</div>
+{% elif order.order_status == 'cancel_requested' %}
+<p class="info-msg">⏳ Cancellation request is pending support approval.</p>
+{% elif cancellation_rejected %}
+<div class="alert alert-warning">❌ Your cancellation request was rejected. You cannot request cancellation again for this order.</div>
+{% endif %}
+{% endblock %}

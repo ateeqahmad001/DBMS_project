@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - GyanPustak{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <h1>🛠️ Admin Dashboard</h1>
+    <div class="bento-grid">
+        <div class="bento-card" style="padding:1.5rem"><h3>🎫 My Tickets</h3><p>{{ tickets|length }} assigned to you</p><a href="{{ url_for('admin.tickets') }}" class="btn btn-primary btn-sm">View →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>📚 Books</h3><p>{{ books|length }} in inventory</p><a href="{{ url_for('admin.manage_books') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>🏫 Universities</h3><p>Manage institutions</p><a href="{{ url_for('admin.universities') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>🏢 Departments</h3><p>Academic departments</p><a href="{{ url_for('admin.departments') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>👨‍🏫 Instructors</h3><p>Faculty members</p><a href="{{ url_for('admin.instructors') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>📖 Courses</h3><p>Course catalog</p><a href="{{ url_for('admin.courses') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+        <div class="bento-card" style="padding:1.5rem"><h3>🔗 Course-Books</h3><p>Book-course links</p><a href="{{ url_for('admin.course_books') }}" class="btn btn-primary btn-sm">Manage →</a></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Create Ticket - GyanPustak{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>🎫 Create Support Ticket</h1>
+    <form method="POST">
+        <div class="form-group"><label>Title *</label><input type="text" name="title" required placeholder="Brief description of your issue"></div>
+        <div class="form-group"><label>Category</label>
+        <select name="category"><option value="user_profile">User Profile</option><option value="products">Products</option>
+        <option value="cart">Cart</option><option value="orders">Orders</option><option value="other" selected>Other</option></select></div>
+        <div class="form-group"><label>Problem Description *</label><textarea name="problem" rows="4" required placeholder="Please describe your issue in detail..."></textarea></div>
+        <button type="submit" class="btn btn-primary">Submit Ticket →</button>
+    </form>
+</div>
+{% endblock %}

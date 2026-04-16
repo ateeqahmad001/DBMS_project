@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ book.title }} - GyanPustak{% endblock %}
+{% block content %}
+<div class="book-detail">
+    <div class="book-detail-header">
+        <div class="book-img-lg">📖</div>
+        <div class="book-info">
+            <h1>{{ book.title }}</h1>
+            <p><strong>Authors:</strong> {{ book.authors or 'N/A' }}</p>
+            <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
+            <p><strong>Publisher:</strong> {{ book.publisher or 'N/A' }}</p>
+            <p><strong>Edition:</strong> {{ book.edition or 'N/A' }}</p>
+            <p><strong>Keywords:</strong> {{ book.keywords or 'N/A' }}</p>
+            <p><strong>Format:</strong> <span class="badge">{{ book.format }}</span> <strong style="margin-left:0.5rem">Type:</strong> <span class="badge badge-{{ book.book_type }}">{{ book.book_type }}</span></p>
+            <p><strong>Rating:</strong> ⭐ {{ "%.1f"|format(book.avg_rating|float) }}/5</p>
+            <p class="price-lg">
+                {% if book.purchase_option in ('buy', 'both') and book.buy_price %}Buy: ₹{{ book.buy_price }}{% endif %}
+                {% if book.purchase_option in ('rent', 'both') and book.rent_price %}{% if book.purchase_option == 'both' %} | {% endif %}Rent: ₹{{ book.rent_price }}{% endif %}
+            </p>
+
+            {% if book.quantity and book.quantity > 0 %}
+                {% if book.purchase_option == 'buy' %}
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}">
+                        <input type="hidden" name="is_rental" value="0">
+                        <button type="submit" class="btn btn-primary">🛒 Buy</button>
+                    </form>
+                {% elif book.purchase_option == 'rent' %}
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}">
+                        <input type="hidden" name="is_rental" value="1">
+                        <button type="submit" class="btn btn-primary">📦 Rent</button>
+                    </form>
+                {% elif book.purchase_option == 'both' %}
+                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+                        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}">
+                            <input type="hidden" name="is_rental" value="0">
+                            <button type="submit" class="btn btn-primary">🛒 Buy</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}">
+                            <input type="hidden" name="is_rental" value="1">
+                            <button type="submit" class="btn btn-secondary">📦 Rent</button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p style="color:red;font-weight:bold">Out of Stock</p>
+            {% endif %}
+        </div>
+    </div>
+    <h2>📝 Reviews</h2>
+    {% for r in reviews %}
+    <div class="review-card">
+        <strong>{{ r.first_name }}</strong> - ⭐ {{ r.rating }}/5
+        <p>{{ r.review_text }}</p>
+    </div>
+    {% endfor %}
+    {% if not reviews %}<p class="empty">No reviews yet. Be the first to review!</p>{% endif %}
+</div>
+{% endblock %}

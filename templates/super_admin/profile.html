@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Profile - GyanPustak{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>👤 My Profile</h1>
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group"><label>First Name *</label><input type="text" name="first_name" value="{{ profile.first_name if profile else '' }}" required placeholder="e.g. Rahul"></div>
+            <div class="form-group"><label>Last Name *</label><input type="text" name="last_name" value="{{ profile.last_name if profile else '' }}" required placeholder="e.g. Sharma"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Gender</label>
+                <select name="gender">
+                    <option value="male" {{ 'selected' if profile and profile.gender == 'male' }}>Male</option>
+                    <option value="female" {{ 'selected' if profile and profile.gender == 'female' }}>Female</option>
+                    <option value="other" {{ 'selected' if profile and profile.gender == 'other' }}>Other</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Phone (10 digits)</label><input type="text" name="phone" value="{{ profile.phone if profile else '' }}" maxlength="10" pattern="\d{10}" placeholder="9876543210"></div>
+        </div>
+        <div class="form-group"><label>Address</label><textarea name="address" rows="2" placeholder="Your full address">{{ profile.address if profile else '' }}</textarea></div>
+        <div class="form-row">
+            <div class="form-group"><label>Employee ID</label><input type="text" value="{{ profile.employee_id if profile else '' }}" disabled style="opacity:0.6;cursor:not-allowed;"></div>
+            <div class="form-group"><label>Aadhaar</label><input type="text" value="{{ profile.aadhaar if profile else '' }}" disabled style="opacity:0.6;cursor:not-allowed;"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Update Profile →</button>
+    </form>
+</div>
+{% endblock %}

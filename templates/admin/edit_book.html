@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Edit Book - GyanPustak{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>✏️ Edit Book</h1>
+    <form method="POST">
+        <div class="form-group"><label>Title *</label><input type="text" name="title" value="{{ book.title }}" required></div>
+        <div class="form-row">
+            <div class="form-group"><label>Authors *</label><input type="text" name="authors" value="{{ book.authors }}" required></div>
+            <div class="form-group"><label>ISBN</label><input type="text" name="isbn" value="{{ book.isbn or '' }}" readonly style="cursor:not-allowed;"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Publisher</label><input type="text" name="publisher" value="{{ book.publisher or '' }}"></div>
+            <div class="form-group"><label>Publication Date</label><input type="date" name="publication_date" value="{{ book.publication_date or '' }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Edition</label><input type="text" name="edition" value="{{ book.edition or '' }}"></div>
+            <div class="form-group"><label>Language</label><input type="text" name="language" value="{{ book.language }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Format</label><select name="format">
+                <option value="paperback" {{ 'selected' if book.format=='paperback' }}>Paperback</option>
+                <option value="hardcover" {{ 'selected' if book.format=='hardcover' }}>Hardcover</option>
+                <option value="ebook" {{ 'selected' if book.format=='ebook' }}>eBook</option></select></div>
+            <div class="form-group"><label>Type</label><select name="book_type">
+                <option value="new" {{ 'selected' if book.book_type=='new' }}>New</option>
+                <option value="used" {{ 'selected' if book.book_type=='used' }}>Used</option></select></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Purchase Option</label><select name="purchase_option">
+                <option value="buy" {{ 'selected' if book.purchase_option=='buy' }}>Buy</option>
+                <option value="rent" {{ 'selected' if book.purchase_option=='rent' }}>Rent</option>
+                <option value="both" {{ 'selected' if book.purchase_option=='both' }}>Both</option></select></div>
+            <div class="form-group"><label>Category *</label><select name="category_id" required>{% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if c.id == book.category_id }}>{{ c.name }}</option>{% endfor %}</select></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Buy Price</label><input type="number" name="buy_price" step="0.01" value="{{ book.buy_price or '' }}"></div>
+            <div class="form-group"><label>Rent Price</label><input type="number" name="rent_price" step="0.01" value="{{ book.rent_price or '' }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Quantity</label><input type="number" name="quantity" value="{{ book.quantity }}"></div>
+            <div class="form-group"><label>Keywords</label><input type="text" name="keywords" value="{{ book.keywords or '' }}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Update Book →</button>
+    </form>
+</div>
+{% endblock %}

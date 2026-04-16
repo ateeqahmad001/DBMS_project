@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Books - GyanPustak{% endblock %}
+{% block content %}
+<h1 style = "margin-bottom:1.5rem;">📚 Browse Books</h1>
+<form class="search-bar" method="GET">
+    <input type="text" name="search" placeholder="Search by title, author, ISBN..." value="{{ search or '' }}">
+    <select name="category_id">
+        <option value="">All Categories</option>
+        {% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if category_id|string == c.id|string }}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+{% if course_books_section %}
+<div style="margin-bottom:2.5rem">
+    <h2>📖 Books for Your Department's Courses</h2>
+    <p style="color:var(--text-secondary);margin-bottom:1rem">Based on your department: <strong style="color:var(--text-primary)">{{ profile.dept_name }}</strong> at <strong style="color:var(--text-primary)">{{ profile.uni_name }}</strong></p>
+    {% for course in course_books_section %}
+    <div class="card" style="margin-bottom:1rem">
+        <h3>{{ course.name }} ({{ course.code or 'N/A' }})</h3>
+        <p style="color:var(--text-secondary);font-size:0.85rem">
+            {% if course.year %}Year: {{ course.year }}{% endif %}
+            {% if course.semester %} | Semester: {{ course.semester }}{% endif %}
+            {% if course.instructors %} | Instructor(s): {{ course.instructors|join(', ') }}{% endif %}
+        </p>
+        <table class="table" style="margin-top:0.5rem">
+            <thead><tr><th>Book</th><th>Authors</th><th>Type</th><th>Price</th><th>Instructor</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for b in course.books %}
+            <tr>
+                <td><a href="{{ url_for('student.book_detail', book_id=b.id) }}">{{ b.title }}</a></td>
+                <td>{{ b.authors }}</td>
+                <td><span class="badge badge-{{ b.link_type }}">{{ b.link_type }}</span></td>
+                <td>
+                    {% if b.purchase_option in ('buy','both') and b.buy_price %}₹{{ b.buy_price }}{% endif %}
+                    {% if b.purchase_option in ('rent','both') and b.rent_price %}{% if b.purchase_option == 'both' %} / {% endif %}Rent ₹{{ b.rent_price }}{% endif %}
+                </td>
+                <td>{{ b.instructor_name or '-' }}</td>
+                <td>
+                    {% if b.purchase_option == 'buy' %}
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=b.id) }}" style="display:inline">
+                        <input type="hidden" name="is_rental" value="0">
+                        <button type="submit" class="btn btn-primary btn-sm">Buy</button>
+                    </form>
+                    {% elif b.purchase_option == 'rent' %}
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=b.id) }}" style="display:inline">
+                        <input type="hidden" name="is_rental" value="1">
+                        <button type="submit" class="btn btn-primary btn-sm">Rent</button>
+                    </form>
+                    {% elif b.purchase_option == 'both' %}
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=b.id) }}" style="display:inline">
+                        <input type="hidden" name="is_rental" value="0">
+                        <button type="submit" class="btn btn-primary btn-sm">Buy</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('student.add_to_cart', book_id=b.id) }}" style="display:inline">
+                        <input type="hidden" name="is_rental" value="1">
+                        <button type="submit" class="btn btn-sm">Rent</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="margin-top:2rem">
+    <h2 style="margin-bottom:1.5rem">📚 All Available Books</h2>
+</div>
+{% endif %}
+
+<div class="book-grid">
+{% for book in books %}
+<div class="book-card">
+    <div class="book-img">📖</div>
+    <h3>{{ book.title }}</h3>
+    <p class="author">{{ book.authors }}</p>
+    <p class="price">
+        {% if book.purchase_option in ('buy','both') and book.buy_price %}Buy: ₹{{ book.buy_price }}{% endif %}
+        {% if book.purchase_option in ('rent','both') and book.rent_price %}{% if book.purchase_option == 'both' %} | {% endif %}Rent: ₹{{ book.rent_price }}{% endif %}
+    </p>
+    <p><span class="badge badge-{{ book.book_type }}">{{ book.book_type }}</span> <span class="badge">{{ book.format }}</span></p>
+    <div class="book-actions"  style="margin-top: 12px">
+        <a href="{{ url_for('student.book_detail', book_id=book.id) }}" class="btn btn-sm">Details</a>
+        {% if book.purchase_option == 'buy' %}
+        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}" style="display:inline">
+            <input type="hidden" name="is_rental" value="0">
+            <button type="submit" class="btn btn-primary btn-sm">Buy</button>
+        </form>
+        {% elif book.purchase_option == 'rent' %}
+        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}" style="display:inline">
+            <input type="hidden" name="is_rental" value="1">
+            <button type="submit" class="btn btn-primary btn-sm">Rent</button>
+        </form>
+        {% elif book.purchase_option == 'both' %}
+        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}" style="display:inline">
+            <input type="hidden" name="is_rental" value="0">
+            <button type="submit" class="btn btn-primary btn-sm">Buy</button>
+        </form>
+        <form method="POST" action="{{ url_for('student.add_to_cart', book_id=book.id) }}" style="display:inline">
+            <input type="hidden" name="is_rental" value="1">
+            <button type="submit" class="btn btn-sm">Rent</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+</div>
+{% if not books %}<p class="empty">No books found. Try adjusting your search criteria.</p>{% endif %}
+{% endblock %}

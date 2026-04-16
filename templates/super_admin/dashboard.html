@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Super Admin Dashboard - GyanPustak{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <h1>🛡️ Super Admin Dashboard</h1>
+    <div class="bento-grid">
+        <div class="bento-card" style="padding:1.5rem">
+            <h3>🛡️ Administrators</h3>
+            <p><span class="counter-value">{{ admin_count }}</span> total</p>
+            <a href="{{ url_for('super_admin.employees', role='admin') }}" class="btn btn-primary btn-sm">View →</a>
+        </div>
+        <div class="bento-card" style="padding:1.5rem">
+            <h3>🎧 Support Staff</h3>
+            <p><span class="counter-value">{{ support_count }}</span> total</p>
+            <a href="{{ url_for('super_admin.employees', role='support') }}" class="btn btn-primary btn-sm">View →</a>
+        </div>
+        <div class="bento-card" style="padding:1.5rem">
+            <h3>🎓 Students</h3>
+            <p><span class="counter-value">{{ student_count }}</span> total</p>
+            <a href="{{ url_for('super_admin.universities') }}" class="btn btn-primary btn-sm">View by University →</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "shared/dashboard_base.html" %}
+{% block title %}Add Course - GyanPustak{% endblock %}
+{% block topbar_title %}Add Course{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="nav-item"><span class="nav-icon">🏠</span><span class="sidebar-text">Dashboard</span></a>
+<a href="{{ url_for('admin.courses') }}" class="nav-item active"><span class="nav-icon">📋</span><span class="sidebar-text">Courses</span></a>
+{% endblock %}
+{% block content %}
+<a href="{{ url_for('admin.courses') }}" class="btn btn-secondary btn-sm mb-3">← Back</a>
+<div class="data-card"><div class="data-card-header"><h3>Add Course</h3></div><div class="data-card-body">
+<form method="POST">
+    <div class="form-group"><label>Course Name*</label><input name="course_name" required></div>
+    <div class="form-group"><label>University*</label><select name="university_id" required>{% for u in universities %}<option value="{{ u.university_id }}">{{ u.name }}</option>{% endfor %}</select></div>
+    <div class="form-row"><div class="form-group"><label>Year*</label><input type="number" name="year" value="2025" required></div><div class="form-group"><label>Semester*</label><select name="semester"><option>Spring</option><option>Fall</option><option>Summer</option></select></div></div>
+    <div class="form-group"><label>Department</label><select name="department_id"><option value="">--</option>{% for d in departments %}<option value="{{ d.department_id }}">{{ d.department_name }}</option>{% endfor %}</select></div>
+    <div class="form-group"><label>Instructor</label><select name="instructor_id"><option value="">--</option>{% for i in instructors %}<option value="{{ i.instructor_id }}">{{ i.first_name }} {{ i.last_name }}</option>{% endfor %}</select></div>
+    <button type="submit" class="btn btn-primary" style="width:auto">Add Course</button>
+</form></div></div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Universities - GyanPustak{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <h1>🏛️ Universities</h1>
+    <p style="color:var(--text-secondary);margin-bottom:1.5rem">Select a university to view enrolled students</p>
+
+    <div class="filter-bar" style="margin-bottom:1.5rem">
+        <label style="color:var(--text-secondary);font-size:0.88rem;margin-right:0.5rem">Filter:</label>
+        <select id="uniFilter" onchange="filterUniversity()" style="padding:0.6rem 1rem;background:var(--bg-glass);border:1.5px solid var(--glass-border);border-radius:var(--radius-md);color:var(--text-primary);font-size:0.88rem;font-family:var(--font);min-width:250px">
+            <option value="">All Universities</option>
+            {% for uni in universities %}
+            <option value="{{ uni.id }}" {{ 'selected' if selected_uni and selected_uni.id == uni.id }}>{{ uni.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if selected_uni %}
+    <div style="margin-bottom:1.5rem">
+        <h2 style="font-size:1.2rem;margin-bottom:0.5rem">🎓 {{ selected_uni.name }} — Students ({{ students|length }})</h2>
+    </div>
+    {% if students %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Course</th></tr></thead>
+            <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ s.first_name }} {{ s.last_name }}</td>
+                <td>{{ s.email }}</td>
+                <td>{{ s.department_name or '—' }}</td>
+                <td>{{ s.course or '—' }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty" style="text-align:center;color:var(--text-muted);padding:2rem">No students enrolled in this university yet.</div>
+    {% endif %}
+    {% else %}
+    <div class="bento-grid">
+        {% for uni in universities %}
+        <a href="{{ url_for('super_admin.universities', uni_id=uni.id) }}" class="bento-card" style="padding:1.5rem;text-decoration:none;color:var(--text-primary);display:block">
+            <h3 style="font-size:1rem;margin-bottom:0.5rem">🏛️ {{ uni.name }}</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem">View enrolled students →</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% if not universities %}
+    <div class="empty" style="text-align:center;color:var(--text-muted);padding:2rem">No universities found.</div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script>
+function filterUniversity() {
+    var val = document.getElementById('uniFilter').value;
+    if (val) {
+        window.location.href = '{{ url_for("super_admin.universities") }}?uni_id=' + val;
+    } else {
+        window.location.href = '{{ url_for("super_admin.universities") }}';
+    }
+}
+</script>
+{% endblock %}

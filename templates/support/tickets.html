@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}All Tickets - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;" >🎫 All Tickets</h1>
+<table class="table">
+    <thead><tr><th>ID</th><th>Creator</th><th>Title</th><th>Category</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+    {% for t in tickets %}
+    <tr>
+        <td style="font-weight:600;">#{{ t.id }}</td>
+        <td>{{ t.creator_email }}</td>
+        <td style="color:var(--text-primary);">{{ t.title }}</td>
+        <td>{{ t.category }}</td>
+        <td><span class="badge badge-{{ t.status }}">{{ t.status }}</span></td>
+        <td>{{ t.date_logged }}</td>
+        <td><a href="{{ url_for('support.ticket_detail', ticket_id=t.id) }}" class="btn btn-sm">View →</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

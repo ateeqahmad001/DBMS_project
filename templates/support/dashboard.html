@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Support Dashboard - GyanPustak{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <h1>🎧 Support Dashboard</h1>
+    <div class="bento-grid">
+        <div class="bento-card" style="padding:1.5rem;display:flex;flex-direction:column;">
+            <h3>🎫 New Tickets</h3>
+            <p style="flex:1;"><span class="counter-value">{{ new_tickets|length }}</span> pending assignment</p>
+            <a href="{{ url_for('support.tickets') }}" class="btn btn-primary btn-sm">View All →</a>
+        </div>
+        <div class="bento-card" style="padding:1.5rem;display:flex;flex-direction:column;">
+            <h3>❌ Cancel Requests</h3>
+            <p style="flex:1;"><span class="counter-value">{{ cancel_requests|length }}</span> awaiting review</p>
+            <a href="{{ url_for('support.cancellations') }}" class="btn btn-primary btn-sm">Review →</a>
+        </div>
+        <div class="bento-card" style="padding:1.5rem;display:flex;flex-direction:column;">
+            <h3>📊 Total Tickets</h3>
+            <p style="flex:1;"><span class="counter-value">{{ tickets|length }}</span> total in system</p>
+            <a href="{{ url_for('support.tickets') }}" class="btn btn-primary btn-sm">Manage →</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

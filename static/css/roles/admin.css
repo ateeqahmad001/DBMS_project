@@ -1,0 +1,63 @@
+/* Admin Role - Subtle grid background with moving light */
+/* .role-admin .role-bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background-image:
+        linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: adminGridShift 30s linear infinite;
+} */
+
+.role-admin .role-bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.role-admin .role-bg-animation::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: adminGlow 10s ease-in-out infinite alternate;
+}
+.role-admin .role-bg-animation::after {
+    content: '';
+    position: absolute;
+    width: 150%; height: 150%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 18px;
+    background: conic-gradient(
+    from 0deg at 50% 50%,
+        rgba(139, 92, 246, 0.15) 0deg,
+        rgba(59, 130, 246, 0.04) 90deg,
+        rgba(139, 92, 246, 0.02) 180deg,
+        rgba(59, 130, 246, 0.04) 270deg,
+        rgba(139, 92, 246, 0.15) 360deg
+    );
+    animation: adminRectRotate 30s linear infinite;
+}
+
+
+@keyframes adminGlow {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    50% { transform: translate(-40%, -60%) scale(1.2); opacity: 0.8; }
+    100% { transform: translate(-60%, -40%) scale(1); opacity: 0.6; }
+}
+@keyframes adminRectRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+/* @keyframes adminGridShift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+} */

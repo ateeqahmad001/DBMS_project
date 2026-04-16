@@ -1,0 +1,78 @@
+/* Support Role - Soft horizontal wave animation reacting to mouse */
+.role-support .role-bg-animation {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.role-support .role-bg-animation::before {
+    content: '';
+    position: absolute;
+    width: 200%; height: 200%;
+    top: -50%; left: -50%;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 40px,
+            rgba(6, 182, 212, 0.03) 40px,
+            rgba(6, 182, 212, 0.03) 41px
+        );
+    animation: supportWave 12s ease-in-out infinite;
+    transform-origin: var(--mouse-x) var(--mouse-y);
+}
+.role-support .role-bg-animation::after {
+    content: '';
+    position: absolute;
+    width: 200%; height: 200%;
+    top: -50%; left: -50%;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(16, 185, 129, 0.025) 60px,
+            rgba(16, 185, 129, 0.025) 61px
+        );
+    animation: supportWave2 16s ease-in-out infinite;
+    transform-origin: var(--mouse-x) var(--mouse-y);
+}
+
+.role-support .role-bg-animation .rotate-rect {
+    position: absolute;
+    width: 150%; height: 150%;
+    top: 50%; left: 50%;
+    border-radius: 18px;
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        rgba(6, 182, 212, 0.06) 0deg,
+        rgba(16, 185, 129, 0.04) 90deg,
+        rgba(6, 182, 212, 0.03) 180deg,
+        rgba(16, 185, 129, 0.04) 270deg,
+        rgba(6, 182, 212, 0.06) 360deg
+    );
+    animation: supportRectRotate 30s linear infinite;
+    z-index: 0;
+}
+
+@keyframes supportWave {
+    0% { transform: translateX(0) skewY(0deg); }
+    25% { transform: translateX(15px) skewY(0.5deg); }
+    50% { transform: translateX(-10px) skewY(-0.3deg); }
+    75% { transform: translateX(8px) skewY(0.2deg); }
+    100% { transform: translateX(0) skewY(0deg); }
+}
+@keyframes supportWave2 {
+    0% { transform: translateX(0) skewY(0deg); }
+    25% { transform: translateX(-12px) skewY(-0.4deg); }
+    50% { transform: translateX(18px) skewY(0.6deg); }
+    75% { transform: translateX(-6px) skewY(-0.2deg); }
+    100% { transform: translateX(0) skewY(0deg); }
+}
+@keyframes supportRectRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}

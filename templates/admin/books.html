@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Manage Books - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">📚 Manage Books</h1>
+<a href="{{ url_for('admin.add_book') }}" class="btn btn-primary" style="margin-bottom:1rem">+ Add Book</a>
+<table class="table">
+    <thead><tr><th>ID</th><th>Title</th><th>Authors</th><th>Type</th><th>Buy</th><th>Rent</th><th>Qty</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for b in books %}
+    <tr>
+        <td>{{ b.id }}</td>
+        <td style="color:var(--text-primary);font-weight:500;">{{ b.title }}</td>
+        <td>{{ b.authors }}</td>
+        <td><span class="badge badge-{{ b.book_type }}">{{ b.book_type }}</span></td>
+        <td>₹{{ b.buy_price or '-' }}</td>
+        <td>₹{{ b.rent_price or '-' }}</td>
+        <td>{% if b.quantity < 5 %}<span style="color:var(--accent-rose);font-weight:600;">{{ b.quantity }}</span>{% else %}{{ b.quantity }}{% endif %}</td>
+        <td>
+            <a href="{{ url_for('admin.edit_book', book_id=b.id) }}" class="btn btn-sm">Edit</a>
+            <form method="POST" action="{{ url_for('admin.delete_book', book_id=b.id) }}" style="display:inline"><button class="btn btn-danger btn-sm">Del</button></form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

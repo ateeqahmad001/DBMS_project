@@ -1,0 +1,30 @@
+{% extends "shared/dashboard_base.html" %}
+{% block title %}Write Review - GyanPustak{% endblock %}
+{% block topbar_title %}Write Review{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('student.dashboard') }}" class="nav-item"><span class="nav-icon">🏠</span><span class="sidebar-text">Dashboard</span></a>
+<a href="{{ url_for('student.books') }}" class="nav-item"><span class="nav-icon">📖</span><span class="sidebar-text">Browse Books</span></a>
+<a href="{{ url_for('student.cart') }}" class="nav-item"><span class="nav-icon">🛒</span><span class="sidebar-text">Cart</span></a>
+<a href="{{ url_for('student.orders') }}" class="nav-item active"><span class="nav-icon">📦</span><span class="sidebar-text">My Orders</span></a>
+<a href="{{ url_for('student.tickets') }}" class="nav-item"><span class="nav-icon">🎫</span><span class="sidebar-text">Tickets</span></a>
+<a href="{{ url_for('student.profile') }}" class="nav-item"><span class="nav-icon">👤</span><span class="sidebar-text">Profile</span></a>
+{% endblock %}
+{% block content %}
+<a href="{{ url_for('student.orders') }}" class="btn btn-secondary btn-sm mb-3">← Back</a>
+<div class="data-card"><div class="data-card-header"><h3>Review: {{ book.title }}</h3></div>
+<div class="data-card-body">
+<form method="POST">
+    <div class="form-group"><label>Rating (1-5)*</label>
+        <select name="rating" style="background:var(--bg-glass);border:1.5px solid var(--glass-border);color:var(--text-primary);">
+            <option value="5" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐⭐⭐ (5)</option>
+            <option value="4" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐⭐ (4)</option>
+            <option value="3" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐⭐ (3)</option>
+            <option value="2" style="background:var(--bg-elevated);color:var(--text-primary);">⭐⭐ (2)</option>
+            <option value="1" style="background:var(--bg-elevated);color:var(--text-primary);">⭐ (1)</option>
+        </select>
+    </div>
+    <div class="form-group"><label>Review</label><textarea name="review_text" rows="5" placeholder="Share your experience..."></textarea></div>
+    <button type="submit" class="btn btn-primary" style="width:auto">Submit Review</button>
+</form>
+</div></div>
+{% endblock %}

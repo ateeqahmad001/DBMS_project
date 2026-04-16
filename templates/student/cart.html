@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Cart - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">🛒 My Cart</h1>
+{% if items %}
+<table class="table">
+    <thead><tr><th>Book</th><th>Type</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+    <tbody>
+    {% for item in items %}
+    <tr>
+        <td style="color:var(--text-primary);font-weight:500;">{{ item.title }}</td>
+        <td><span class="badge badge-{{ 'new' if not item.is_rental else 'assigned' }}">{{ 'Rent' if item.is_rental else 'Buy' }}</span></td>
+        <td>₹{{ item.rent_price if item.is_rental and item.rent_price else item.buy_price }}</td>
+        <td>{{ item.quantity }}</td>
+        <td style="color:var(--accent-cyan);font-weight:600;">₹{{ ((item.rent_price if item.is_rental and item.rent_price else item.buy_price) or 0) * item.quantity }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('student.remove_from_cart', item_id=item.id) }}" style="display:inline;">
+                {% if item.quantity > 1 %}
+                <button class="btn btn-danger btn-sm" title="Decrease quantity by 1">➖ Remove 1</button>
+                {% else %}
+                <button class="btn btn-danger btn-sm" title="Remove from cart">🗑 Remove</button>
+                {% endif %}
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="cart-total"><h3>Total: ₹{{ total }}</h3></div>
+<a href="{{ url_for('student.checkout') }}" class="btn btn-primary">Proceed to Checkout →</a>
+{% else %}
+<p class="empty">Your cart is empty. <a href="{{ url_for('student.browse_books') }}">Browse books →</a></p>
+{% endif %}
+{% endblock %}

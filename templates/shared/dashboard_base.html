@@ -1,0 +1,48 @@
+{% extends "shared/base.html" %}
+{% block body %}
+<div class="app-layout{% block body_class %}{% endblock %}">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <h2>📚 GyanPustak</h2>
+        </div>
+        <nav class="sidebar-nav">
+            {% block sidebar %}{% endblock %}
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{{ url_for('auth.logout') }}" class="nav-item" style="color:var(--accent-rose);">
+                <span class="nav-icon">🚪</span>
+                <span class="sidebar-text">Logout</span>
+            </a>
+        </div>
+    </aside>
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="topbar-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">☰</button>
+                <span class="topbar-title">{% block topbar_title %}Dashboard{% endblock %}</span>
+            </div>
+            <div class="topbar-right">
+                <div class="user-badge">
+                    <div class="user-avatar">{{ session.display_name[0] if session.display_name else 'U' }}</div>
+                    <div class="user-info">
+                        <div class="name">{{ session.display_name }}</div>
+                        <div class="role">{{ session.role | replace('_', ' ') }}</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }}">{{ msg }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <div class="page-content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

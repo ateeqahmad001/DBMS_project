@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}My Orders - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">📦 My Orders</h1>
+{% if orders %}
+<table class="table">
+    <thead><tr><th>Order ID</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for o in orders %}
+    <tr>
+        <td style="font-weight:600;">#{{ o.id }}</td>
+        <td>{{ o.order_date }}</td>
+        <td style="color:var(--accent-cyan);font-weight:600;">₹{{ o.total_amount }}</td>
+        <td><span class="badge badge-{{ o.order_status }}">{{ o.order_status }}</span></td>
+        <td><a href="{{ url_for('student.order_detail', order_id=o.id) }}" class="btn btn-sm">View →</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}<p class="empty">No orders yet. Start by <a href="{{ url_for('student.browse_books') }}">browsing books</a>.</p>{% endif %}
+{% endblock %}

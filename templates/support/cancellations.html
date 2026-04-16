@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Cancellation Requests - GyanPustak{% endblock %}
+{% block content %}
+<h1 style = "margin-bottom:1.5rem;">❌ Cancellation Requests</h1>
+{% if requests %}
+<table class="table">
+    <thead><tr><th>Order</th><th>Student</th><th>Status</th><th>Amount</th><th>Reason</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for r in requests %}
+    <tr>
+        <td style="font-weight:600;">#{{ r.id }}</td>
+        <td>{{ r.first_name }} {{ r.last_name }} ({{ r.email }})</td>
+        <td><span class="badge badge-{{ r.order_status }}">{{ r.order_status }}</span></td>
+        <td style="color:var(--accent-cyan);font-weight:600;">₹{{ r.total_amount }}</td>
+        <td style="max-width:200px;">{{ r.cancellation_reason }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('support.approve_cancel', order_id=r.id) }}" style="display:inline"><button class="btn btn-primary btn-sm">Approve</button></form>
+            <form method="POST" action="{{ url_for('support.reject_cancel', order_id=r.id) }}" style="display:inline"><button class="btn btn-danger btn-sm">Reject</button></form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}<p class="empty">No pending cancellation requests.</p>{% endif %}
+{% endblock %}

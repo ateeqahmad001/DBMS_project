@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GyanPustak{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/book.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    {% if session.get('role') == 'student' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/student.css') }}">
+    {% elif session.get('role') == 'admin' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/admin.css') }}">
+    {% elif session.get('role') == 'support' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/support.css') }}">
+    {% elif session.get('role') == 'superadmin' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roles/superadmin.css') }}">
+    {% endif %}
+</head>
+<body class="role-{{ session.get('role', 'guest') }}">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orbs">
+        <div class="glow-orb"></div>
+        <div class="glow-orb"></div>
+        <div class="glow-orb"></div>
+    </div>
+
+    <!-- Role-based background animation container -->
+    <div class="role-bg-animation" id="roleBgAnimation"><div class="rotate-rect"></div></div>
+
+    <!-- Falling Books Animation -->
+    <div class="falling-books" id="fallingBooks"></div>
+
+    {% if session.get('user_id') %}
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    
+    <!-- Mobile Sidebar -->
+    <aside class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <span class="mobile-sidebar-brand">📚 GyanPustak</span>
+            <button class="mobile-sidebar-close" onclick="closeSidebar()">✕</button>
+        </div>
+        <nav class="mobile-sidebar-nav">
+            {% if session.get('role') == 'student' %}
+            <a href="{{ url_for('student.dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ url_for('student.browse_books') }}">📚 Books</a>
+            <a href="{{ url_for('student.view_cart') }}">🛒 Cart</a>
+            <a href="{{ url_for('student.orders') }}">📦 Orders</a>
+            <a href="{{ url_for('student.tickets') }}">🎫 Tickets</a>
+            <a href="{{ url_for('student.profile') }}">👤 Profile</a>
+            {% elif session.get('role') == 'support' %}
+            <a href="{{ url_for('support.dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ url_for('support.tickets') }}">🎫 Tickets</a>
+            <a href="{{ url_for('support.create_ticket') }}">📝 Log Issue</a>
+            <a href="{{ url_for('support.cancellations') }}">❌ Cancellations</a>
+            <a href="{{ url_for('support.profile') }}">👤 Profile</a>
+            {% elif session.get('role') == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ url_for('admin.manage_books') }}">📚 Books</a>
+            <a href="{{ url_for('admin.tickets') }}">🎫 Tickets</a>
+            <a href="{{ url_for('admin.universities') }}">🏛 Universities</a>
+            <a href="{{ url_for('admin.departments') }}">🏢 Departments</a>
+            <a href="{{ url_for('admin.instructors') }}">👨‍🏫 Instructors</a>
+            <a href="{{ url_for('admin.courses') }}">📖 Courses</a>
+            <a href="{{ url_for('admin.course_books') }}">🔗 Course-Books</a>
+            <a href="{{ url_for('admin.profile') }}">👤 Profile</a>
+            {% elif session.get('role') == 'superadmin' %}
+            <a href="{{ url_for('super_admin.dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ url_for('super_admin.universities') }}">🏛 Universities</a>
+            <a href="{{ url_for('super_admin.employees') }}">👥 Employees</a>
+            <a href="{{ url_for('super_admin.add_employee') }}">➕ Add Employee</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="mobile-sidebar-logout">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <button class="hamburger-btn" id="hamburgerBtn" onclick="openSidebar()">☰</button>
+            <a href="/">📚 GyanPustak</a>
+        </div>
+        <div class="nav-links">
+            {% if session.get('role') == 'student' %}
+            <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('student.browse_books') }}">Books</a>
+            <a href="{{ url_for('student.view_cart') }}">🛒 Cart</a>
+            <a href="{{ url_for('student.orders') }}">Orders</a>
+            <a href="{{ url_for('student.tickets') }}">Tickets</a>
+            <a href="{{ url_for('student.profile') }}">Profile</a>
+            {% elif session.get('role') == 'support' %}
+            <a href="{{ url_for('support.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('support.tickets') }}">Tickets</a>
+            <a href="{{ url_for('support.create_ticket') }}">Log Issue</a>
+            <a href="{{ url_for('support.cancellations') }}">Cancellations</a>
+            <a href="{{ url_for('support.profile') }}">Profile</a>
+            {% elif session.get('role') == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('admin.manage_books') }}">Books</a>
+            <a href="{{ url_for('admin.tickets') }}">Tickets</a>
+            <a href="{{ url_for('admin.universities') }}">Universities</a>
+            <a href="{{ url_for('admin.departments') }}">Departments</a>
+            <a href="{{ url_for('admin.instructors') }}">Instructors</a>
+            <a href="{{ url_for('admin.courses') }}">Courses</a>
+            <a href="{{ url_for('admin.course_books') }}">Course-Books</a>
+            <a href="{{ url_for('admin.profile') }}">Profile</a>
+            {% elif session.get('role') == 'superadmin' %}
+            <a href="{{ url_for('super_admin.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('super_admin.universities') }}">Universities</a>
+            <a href="{{ url_for('super_admin.employees') }}">Employees</a>
+            <a href="{{ url_for('super_admin.add_employee') }}">Add Employee</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Magnetic Button & Counter Animation Script -->
+    <script>
+    document.querySelectorAll('.btn-primary').forEach(function(btn) {
+        btn.addEventListener('mousemove', function(e) {
+            var rect = btn.getBoundingClientRect();
+            var x = e.clientX - rect.left - rect.width / 2;
+            var y = e.clientY - rect.top - rect.height / 2;
+            var dist = Math.sqrt(x * x + y * y);
+            if (dist < 100) {
+                btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
+            }
+        });
+        btn.addEventListener('mouseleave', function() { btn.style.transform = ''; });
+    });
+    document.querySelectorAll('.stat-card .value, .counter-value').forEach(function(el) {
+        var target = parseInt(el.textContent) || 0;
+        if (target <= 0) return;
+        var current = 0;
+        var step = Math.max(1, Math.floor(target / 30));
+        var timer = setInterval(function() {
+            current += step;
+            if (current >= target) { current = target; clearInterval(timer); }
+            el.textContent = current;
+        }, 30);
+    });
+
+    // Support role: wave reacts to mouse
+    if (document.body.classList.contains('role-support')) {
+        var waveBg = document.getElementById('roleBgAnimation');
+        if (waveBg) {
+            document.addEventListener('mousemove', function(e) {
+                var x = (e.clientX / window.innerWidth) * 100;
+                var y = (e.clientY / window.innerHeight) * 100;
+                waveBg.style.setProperty('--mouse-x', x + '%');
+                waveBg.style.setProperty('--mouse-y', y + '%');
+            });
+        }
+    }
+
+    // Falling books animation
+    (function() {
+        var container = document.getElementById('fallingBooks');
+        if (!container) return;
+        var bookEmojis = ['📕', '📗', '📘', '📙', '📓', '📔', '📒', '📖'];
+        var maxBooks = 120;
+
+        function createFallingBook() {
+            if (container.children.length >= maxBooks) return;
+            var book = document.createElement('div');
+            book.className = 'falling-book';
+            book.textContent = bookEmojis[Math.floor(Math.random() * bookEmojis.length)];
+            book.style.left = (Math.random() * 100) + '%';
+            book.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+            book.style.opacity = '0';
+            var duration = 8 + Math.random() * 12;
+            book.style.animationDuration = duration + 's';
+            book.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(book);
+            setTimeout(function() { if (book.parentNode) book.parentNode.removeChild(book); }, (duration + 3) * 1000);
+        }
+
+        // Create initial batch
+        for (var i = 0; i < 6; i++) {
+            setTimeout(createFallingBook, i * 50);
+        }
+        // Keep spawning
+        setInterval(createFallingBook, 150);
+    })();
+    </script>
+    
+    <script>
+    function openSidebar() {
+        document.getElementById('mobileSidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        document.getElementById('mobileSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

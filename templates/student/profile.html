@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Profile - GyanPustak{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>👤 My Profile</h1>
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group"><label>First Name * (not numeric-only)</label><input type="text" name="first_name" value="{{ profile.first_name if profile else '' }}" required placeholder="e.g. Rahul"></div>
+            <div class="form-group"><label>Last Name * (not numeric-only)</label><input type="text" name="last_name" value="{{ profile.last_name if profile else '' }}" required placeholder="e.g. Sharma"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Phone (exactly 10 digits)</label><input type="text" name="phone" value="{{ profile.phone if profile else '' }}" maxlength="10" pattern="\d{10}" placeholder="9876543210"></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" name="dob" value="{{ profile.dob if profile else '' }}"></div>
+        </div>
+        <div class="form-group"><label>Address</label><textarea name="address" rows="2" placeholder="Your full address">{{ profile.address if profile else '' }}</textarea></div>
+        <div class="form-row">
+            <div class="form-group"><label>College/University</label>
+                <select name="university_id" id="prof_uni" onchange="loadProfDepts()">
+                    <option value="">Select University</option>
+                    {% for u in universities %}<option value="{{ u.id }}" {{ 'selected' if profile and profile.university_id == u.id }}>{{ u.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Department</label>
+                <select name="department_id" id="prof_dept">
+                    <option value="">Select Department</option>
+                    {% for d in departments %}<option value="{{ d.id }}" {{ 'selected' if profile and profile.department_id == d.id }}>{{ d.name }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Major</label><input type="text" name="major" value="{{ profile.major if profile else '' }}" placeholder="e.g. Computer Science"></div>
+            <div class="form-group"><label>Status</label>
+            <select name="student_status"><option value="UG" {{ 'selected' if profile and profile.student_status == 'UG' }}>UG</option><option value="PG" {{ 'selected' if profile and profile.student_status == 'PG' }}>PG</option></select></div>
+        </div>
+        <div class="form-group"><label>Year</label><input type="number" name="year" value="{{ profile.year if profile else '' }}" min="1" max="6" placeholder="1-6"></div>
+        <button type="submit" class="btn btn-primary btn-block">Update Profile →</button>
+    </form>
+</div>
+
+<!-- Delete Account Section -->
+<div class="form-container" style="margin-top:2rem;border-color:rgba(244,63,94,0.3)">
+    <h2 style="color:var(--rose);font-size:1.1rem;margin-bottom:0.5rem;-webkit-text-fill-color:var(--rose);background:none">⚠️ Danger Zone</h2>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem">Once you delete your account, there is no going back. All your data, orders, and reviews will be permanently removed.</p>
+    <button type="button" class="btn btn-danger" onclick="showDeleteModal()" style="width:auto;background:var(--gradient-rose);border:none;color:#fff;padding:0.6rem 1.5rem;border-radius:var(--radius-md);cursor:pointer;font-weight:600;font-size:0.88rem">Delete My Account</button>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,0.9);backdrop-filter:blur(12px);align-items:center;justify-content:center">
+    <div style="background:var(--bg-elevated);border:1px solid var(--glass-border);border-radius:var(--radius-xl);padding:2rem;max-width:440px;width:90%;text-align:center">
+        <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+        <h3 style="font-size:1.2rem;margin-bottom:0.5rem;color:var(--text-primary)">Delete Your Account?</h3>
+        <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1.5rem">This action is <strong style="color:var(--rose)">permanent</strong> and cannot be undone. All your data will be erased.</p>
+        <p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1rem">Type <strong style="color:var(--rose)">DELETE</strong> to confirm:</p>
+        <input type="text" id="deleteConfirmInput" placeholder="Type DELETE" style="width:100%;padding:0.75rem 1rem;background:var(--bg-glass);border:1.5px solid var(--glass-border);border-radius:var(--radius-md);color:var(--text-primary);font-size:0.9rem;font-family:var(--font);margin-bottom:1rem;text-align:center">
+        <div style="display:flex;gap:0.75rem;justify-content:center">
+            <button type="button" onclick="hideDeleteModal()" class="btn btn-secondary" style="width:auto;padding:0.6rem 1.5rem">Cancel</button>
+            <form method="POST" action="{{ url_for('student.delete_account') }}" id="deleteForm" style="display:inline">
+                <button type="submit" id="deleteBtn" disabled class="btn" style="width:auto;padding:0.6rem 1.5rem;background:var(--gradient-rose);border:none;color:#fff;cursor:not-allowed;opacity:0.5;border-radius:var(--radius-md);font-weight:600;font-size:0.88rem">Delete Forever</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function loadProfDepts() {
+    var uniId = document.getElementById('prof_uni').value;
+    var sel = document.getElementById('prof_dept');
+    sel.innerHTML = '<option value="">Select Department</option>';
+    if (!uniId) return;
+    fetch('/api/departments/' + uniId)
+        .then(r => r.json())
+        .then(data => {
+            data.forEach(d => {
+                var o = document.createElement('option');
+                o.value = d.id; o.textContent = d.name;
+                sel.appendChild(o);
+            });
+        });
+}
+
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+    document.getElementById('deleteConfirmInput').value = '';
+    document.getElementById('deleteBtn').disabled = true;
+    document.getElementById('deleteBtn').style.opacity = '0.5';
+    document.getElementById('deleteBtn').style.cursor = 'not-allowed';
+}
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+document.getElementById('deleteConfirmInput').addEventListener('input', function() {
+    var btn = document.getElementById('deleteBtn');
+    if (this.value === 'DELETE') {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+});
+</script>
+{% endblock %}

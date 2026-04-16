@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Employees - GyanPustak{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <h1>👥 Employees</h1>
+        <a href="{{ url_for('super_admin.add_employee') }}" class="btn btn-primary" style="width:auto">+ Add Employee</a>
+    </div>
+
+    <div class="filter-bar" style="margin-bottom:1.5rem">
+        <label style="color:var(--text-secondary);font-size:0.88rem;margin-right:0.5rem">Filter by role:</label>
+        <a href="{{ url_for('super_admin.employees', role='all') }}" class="btn {{ 'btn-primary' if role_filter == 'all' else 'btn-secondary' }}" style="width:auto;padding:0.5rem 1rem;font-size:0.85rem">All</a>
+        <a href="{{ url_for('super_admin.employees', role='admin') }}" class="btn {{ 'btn-primary' if role_filter == 'admin' else 'btn-secondary' }}" style="width:auto;padding:0.5rem 1rem;font-size:0.85rem">Admins</a>
+        <a href="{{ url_for('super_admin.employees', role='support') }}" class="btn {{ 'btn-primary' if role_filter == 'support' else 'btn-secondary' }}" style="width:auto;padding:0.5rem 1rem;font-size:0.85rem">Support</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Gender</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for e in employees %}
+            <tr>
+                <td>{{ e.first_name }} {{ e.last_name }}</td>
+                <td>{{ e.email }}</td>
+                <td><span class="badge badge-{{ 'admin' if e.role == 'admin' else 'support' }}">{{ e.role }}</span></td>
+                <td>{{ e.gender or '—' }}</td>
+                <td>{{ e.phone or '—' }}</td>
+                <td><span class="badge badge-{{ 'active' if e.is_active else 'inactive' }}">{{ 'Active' if e.is_active else 'Inactive' }}</span></td>
+                <td>
+                    {% if e.is_active %}
+                    <button type="button" class="btn-deactivate" onclick="showDeactivateModal('{{ e.first_name }} {{ e.last_name }}', '{{ e.email }}', {{ e.user_id }})">Deactivate</button>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('super_admin.toggle_employee_status', user_id=e.user_id) }}" style="display:inline">
+                        <input type="hidden" name="action" value="activate">
+                        <button type="submit" class="btn-activate">Activate</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% if not employees %}
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem">No employees found.</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Deactivate Confirmation Modal -->
+<div id="deactivateModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,0.9);backdrop-filter:blur(12px);align-items:center;justify-content:center">
+    <div style="background:var(--bg-elevated);border:1px solid var(--glass-border);border-radius:var(--radius-xl);padding:2rem;max-width:440px;width:90%;text-align:center">
+        <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+        <h3 style="font-size:1.2rem;margin-bottom:0.5rem;color:var(--text-primary)">Deactivate Account?</h3>
+        <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:0.5rem;">You are about to deactivate the account of:</p>
+        <p style="color:var(--text-primary);font-weight:600;font-size:0.95rem;margin-bottom:0.25rem;" id="deactivateName"></p>
+        <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1.5rem;" id="deactivateEmail"></p>
+        <p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1rem;">This employee will no longer be able to log in. You can reactivate their account later.</p>
+        <p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1rem;">Type <strong style="color:var(--rose)">DEACTIVATE</strong> to confirm:</p>
+        <input type="text" id="deactivateConfirmInput" placeholder="Type DEACTIVATE" style="width:100%;padding:0.75rem 1rem;background:var(--bg-glass);border:1.5px solid var(--glass-border);border-radius:var(--radius-md);color:var(--text-primary);font-size:0.9rem;font-family:var(--font);margin-bottom:1rem;text-align:center">
+        <div style="display:flex;gap:0.75rem;justify-content:center">
+            <button type="button" onclick="hideDeactivateModal()" class="btn btn-secondary" style="width:auto;padding:0.6rem 1.5rem">Cancel</button>
+            <form method="POST" id="deactivateForm" style="display:inline">
+                <input type="hidden" name="action" value="deactivate">
+                <button type="submit" id="deactivateBtn" disabled class="btn" style="width:auto;padding:0.6rem 1.5rem;background:var(--gradient-rose);border:none;color:#fff;cursor:not-allowed;opacity:0.5;border-radius:var(--radius-md);font-weight:600;font-size:0.88rem">Deactivate</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function showDeactivateModal(name, email, userId) {
+    document.getElementById('deactivateName').textContent = name;
+    document.getElementById('deactivateEmail').textContent = email;
+    document.getElementById('deactivateForm').action = '/super-admin/toggle-status/' + userId;
+    document.getElementById('deactivateModal').style.display = 'flex';
+    document.getElementById('deactivateConfirmInput').value = '';
+    document.getElementById('deactivateBtn').disabled = true;
+    document.getElementById('deactivateBtn').style.opacity = '0.5';
+    document.getElementById('deactivateBtn').style.cursor = 'not-allowed';
+}
+function hideDeactivateModal() {
+    document.getElementById('deactivateModal').style.display = 'none';
+}
+document.getElementById('deactivateConfirmInput').addEventListener('input', function() {
+    var btn = document.getElementById('deactivateBtn');
+    if (this.value === 'DEACTIVATE') {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+});
+</script>
+{% endblock %}

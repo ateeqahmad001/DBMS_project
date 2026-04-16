@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}Course-Book Links - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;"> 🔗 Course-Book Links</h1>
+<div class="form-container" style="margin-bottom:2rem;max-width:100%;">
+    <h3>Link Book to Course</h3>
+    <form method="POST" action="{{ url_for('admin.add_course_book') }}">
+        <div class="form-row">
+            <div class="form-group"><label>University *</label>
+                <select id="cb_uni" required onchange="loadCBCourses()">
+                    <option value="">Select University</option>
+                    {% for u in universities %}<option value="{{ u.id }}">{{ u.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Course *</label>
+                <select name="course_id" id="cb_course" required disabled onchange="loadCBInstructors()">
+                    <option value="">-- Select university first --</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Book *</label>
+                <select name="book_id" required>{% for b in books %}<option value="{{ b.id }}">{{ b.title }}</option>{% endfor %}</select>
+            </div>
+            <div class="form-group"><label>Instructor (from course)</label>
+                <select name="instructor_id" id="cb_instructor" disabled>
+                    <option value="">-- Select course first --</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Link Type</label>
+                <select name="link_type"><option value="required">Required</option><option value="recommended">Recommended</option></select>
+            </div>
+            <div class="form-group"><label>Year</label><input type="number" name="year" id="cb_year" min="2020" max="2030" readonly style = "cursor:not-allowed"></div>
+            <div class="form-group"><label>Semester</label>
+                <input type="text" name="semester" id="cb_semester" readonly style = "cursor:not-allowed">
+            </div>
+        </div>
+        <button class="btn btn-primary">Link Book →</button>
+    </form>
+</div>
+
+<!-- Filter by University -->
+<div class="filter-bar">
+    <label>Filter by University:</label>
+    <select id="filterCBUni" onchange="filterCourseBooks()">
+        <option value="">All Universities</option>
+        {% for u in universities %}<option value="{{ u.name }}">{{ u.name }}</option>{% endfor %}
+    </select>
+</div>
+
+<table class="table" id="cbTable">
+    <thead><tr><th>University</th><th>Course</th><th>Book</th><th>Type</th><th>Year</th><th>Semester</th><th>Instructor</th><th></th></tr></thead>
+    <tbody>
+    {% for l in links %}
+    <tr data-university="{{ l.uni_name }}">
+        <td>{{ l.uni_name }}</td><td>{{ l.course_name }}</td><td style="color:var(--text-primary);font-weight:500;">{{ l.book_title }}</td><td><span class="badge badge-{{ l.link_type }}">{{ l.link_type }}</span></td>
+        <td>{{ l.year or '-' }}</td><td>{{ l.semester or '-' }}</td><td>{{ l.instructor_name or '-' }}</td>
+        <td><form method="POST" action="{{ url_for('admin.delete_course_book', link_id=l.id) }}"><button class="btn btn-danger btn-sm">Remove</button></form></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block scripts %}
+<script>
+function loadCBCourses() {
+    var uniId = document.getElementById('cb_uni').value;
+    var courseSelect = document.getElementById('cb_course');
+    var instSelect = document.getElementById('cb_instructor');
+    courseSelect.innerHTML = '<option value="">Loading...</option>';
+    instSelect.innerHTML = '<option value="">-- Select course first --</option>';
+    instSelect.disabled = true;
+    if (!uniId) {
+        courseSelect.innerHTML = '<option value="">-- Select university first --</option>';
+        courseSelect.disabled = true;
+        document.getElementById('cb_year').value = '';      
+        document.getElementById('cb_semester').value = ''; 
+        return;
+    }
+    fetch('/admin/api/courses/' + uniId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            data.forEach(function(c) {
+                var opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name + (c.code ? ' (' + c.code + ')' : '');
+                opt.dataset.year = c.year || '';
+                opt.dataset.semester = c.semester || '';
+                courseSelect.appendChild(opt);
+            });
+            courseSelect.disabled = false;
+        });
+}
+function loadCBInstructors() {
+    var courseId = document.getElementById('cb_course').value;
+    var instSelect = document.getElementById('cb_instructor');
+
+    // Auto-fill year and semester from the selected course option's data
+    var courseSelect = document.getElementById('cb_course');
+    var selectedOption = courseSelect.options[courseSelect.selectedIndex];
+    document.getElementById('cb_year').value = selectedOption.dataset.year || '';
+    document.getElementById('cb_semester').value = selectedOption.dataset.semester || '';
+
+    if (!courseId) {
+        instSelect.innerHTML = '<option value="">-- Select course first --</option>';
+        instSelect.disabled = true;
+        return;
+    }
+    fetch('/admin/api/course-instructors/' + courseId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            instSelect.innerHTML = '<option value="">Select Instructor</option>';
+            data.forEach(function(i) {
+                var opt = document.createElement('option');
+                opt.value = i.id; opt.textContent = i.full_name;
+                instSelect.appendChild(opt);
+            });
+            instSelect.disabled = false;
+        });
+}
+
+function filterCourseBooks() {
+    var selected = document.getElementById('filterCBUni').value;
+    var rows = document.querySelectorAll('#cbTable tbody tr');
+    rows.forEach(function(row) {
+        if (!selected || row.getAttribute('data-university') === selected) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - GyanPustak{% endblock %}
+{% block content %}
+<h1 style = "margin-bottom:1.5rem;">💳 Checkout</h1>
+<div class="checkout-container">
+    <div class="order-summary">
+        <h3>📋 Order Summary</h3>
+        {% for item in items %}
+        <div class="checkout-item">
+            <span>{{ item.title }} × {{ item.quantity }}</span>
+            <span>₹{{ ((item.rent_price if item.is_rental and item.rent_price else item.buy_price) or 0) * item.quantity }}</span>
+        </div>
+        {% endfor %}
+        <hr style="border-color: rgba(255,255,255,0.08); margin: 0.5rem 0;">
+        <div class="checkout-item total">
+            <span>Total</span>
+            <span>₹{{ total }}</span>
+        </div>
+    </div>
+    <form method="POST" class="checkout-form" id="checkoutForm">
+        <h3>🚚 Shipping Details</h3>
+        <div class="form-group">
+            <label>Shipping Address *</label>
+            <textarea name="shipping_address" required rows="3" placeholder="Enter your full shipping address">{{ profile.address if profile else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>Shipping Type</label>
+            <select name="shipping_type">
+                <option value="standard">📦 Standard Delivery</option>
+                <option value="2-day">🚀 2-Day Delivery</option>
+                <option value="1-day">⚡ 1-Day Delivery</option>
+            </select>
+        </div>
+
+        <h3>💳 Payment Information</h3>
+        <div class="form-group">
+            <label>Card Holder Name *</label>
+            <input type="text" name="card_holder_name" required placeholder="Name as it appears on card">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Credit Card Number * (13-19 digits)</label>
+                <input type="text" name="credit_card_number" maxlength="19" placeholder="XXXX-XXXX-XXXX-XXXX" required pattern="[\d\s\-]{13,19}">
+            </div>
+            <div class="form-group">
+                <label>Expiry Date *</label>
+                <input type="text" name="expiry_date" placeholder="MM/YY" maxlength="5" required pattern="\d{2}/\d{2}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Card Type</label>
+            <select name="card_type">
+                <option value="visa">💳 Visa</option>
+                <option value="mastercard">💳 Mastercard</option>
+                <option value="amex">💳 American Express</option>
+                <option value="rupay">💳 RuPay</option>
+                <option value="discover">💳 Discover</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:1rem">Place Order →</button>
+    </form>
+</div>
+{% endblock %}

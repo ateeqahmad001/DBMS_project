@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Courses - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">📖 Courses</h1>
+<div class="form-container" style="margin-bottom:2rem;max-width:100%;">
+    <h3>Add Course</h3>
+    <form method="POST" action="{{ url_for('admin.add_course') }}">
+        <div class="form-row">
+            <div class="form-group"><label>Course Name *</label><input type="text" name="name" required></div>
+            <div class="form-group"><label>Code</label><input type="text" name="code"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>University *</label>
+                <select name="university_id" id="course_uni" required onchange="filterByUniversity()">
+                    <option value="">Select University</option>
+                    {% for u in universities %}<option value="{{ u.id }}">{{ u.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Year</label><input type="number" name="year" min="2020" max="2030"></div>
+        </div>
+        <div class="form-group"><label>Semester</label>
+            <select name="semester"><option value="">-</option><option value="Fall">Fall</option><option value="Spring">Spring</option><option value="Summer">Summer</option></select>
+        </div>
+        <div class="form-group"><label>Departments (hold Ctrl for multiple)</label>
+            <select name="department_ids" id="course_depts" multiple style="height:120px" disabled>
+                <option value="" disabled>-- Select a university first --</option>
+            </select>
+            <small id="dept_hint" style="color:var(--text-muted);">Select a university to load departments.</small>
+        </div>
+        <div class="form-group"><label>Instructors (hold Ctrl for multiple)</label>
+            <select name="instructor_ids" id="course_insts" multiple style="height:100px" disabled>
+                <option value="" disabled>-- Select a university first --</option>
+            </select>
+            <small id="inst_hint" style="color:var(--text-muted);">Select a university to load instructors.</small>
+        </div>
+        <button class="btn btn-primary">Add Course →</button>
+    </form>
+</div>
+
+<!-- Filter by University -->
+<div class="filter-bar">
+    <label>Filter by University:</label>
+    <select id="filterCourseUni" onchange="filterCourses()">
+        <option value="">All Universities</option>
+        {% for u in universities %}<option value="{{ u.name }}">{{ u.name }}</option>{% endfor %}
+    </select>
+</div>
+
+<table class="table" id="courseTable">
+    <thead><tr><th>ID</th><th>Name</th><th>Code</th><th>University</th><th>Year</th><th>Semester</th><th>Departments</th><th>Instructors</th><th></th></tr></thead>
+    <tbody>
+    {% for c in courses %}
+    <tr data-university="{{ c.uni_name }}">
+        <td>{{ c.id }}</td><td style="color:var(--text-primary);font-weight:500;">{{ c.name }}</td><td>{{ c.code or '-' }}</td><td>{{ c.uni_name }}</td>
+        <td>{{ c.year or '-' }}</td><td>{{ c.semester or '-' }}</td>
+        <td>{{ c.departments|join(', ') }}</td>
+        <td>{{ c.instructors|join(', ') }}</td>
+        <td><form method="POST" action="{{ url_for('admin.delete_course', course_id=c.id) }}"><button class="btn btn-danger btn-sm">Delete</button></form></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block scripts %}
+<script>
+function filterByUniversity() {
+    var uniId = document.getElementById('course_uni').value;
+    var deptSelect = document.getElementById('course_depts');
+    var instSelect = document.getElementById('course_insts');
+    deptSelect.innerHTML = '';
+    instSelect.innerHTML = '';
+    if (!uniId) {
+        deptSelect.innerHTML = '<option value="" disabled>-- Select a university first --</option>';
+        instSelect.innerHTML = '<option value="" disabled>-- Select a university first --</option>';
+        deptSelect.disabled = true;
+        instSelect.disabled = true;
+        document.getElementById('dept_hint').textContent = 'Select a university to load departments.';
+        document.getElementById('inst_hint').textContent = 'Select a university to load instructors.';
+        return;
+    }
+    fetch('/admin/api/departments/' + uniId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            deptSelect.innerHTML = '';
+            if (data.length === 0) {
+                deptSelect.innerHTML = '<option value="" disabled>No departments found</option>';
+                deptSelect.disabled = true;
+                document.getElementById('dept_hint').textContent = 'No departments for this university.';
+            } else {
+                data.forEach(function(d) {
+                    var opt = document.createElement('option');
+                    opt.value = d.id; opt.textContent = d.name;
+                    deptSelect.appendChild(opt);
+                });
+                deptSelect.disabled = false;
+                document.getElementById('dept_hint').textContent = data.length + ' department(s) found.';
+            }
+        });
+    fetch('/admin/api/instructors/' + uniId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            instSelect.innerHTML = '';
+            if (data.length === 0) {
+                instSelect.innerHTML = '<option value="" disabled>No instructors found</option>';
+                instSelect.disabled = true;
+                document.getElementById('inst_hint').textContent = 'No instructors for this university.';
+            } else {
+                data.forEach(function(i) {
+                    var opt = document.createElement('option');
+                    opt.value = i.id; opt.textContent = i.full_name;
+                    instSelect.appendChild(opt);
+                });
+                instSelect.disabled = false;
+                document.getElementById('inst_hint').textContent = data.length + ' instructor(s) found.';
+            }
+        });
+}
+
+function filterCourses() {
+    var selected = document.getElementById('filterCourseUni').value;
+    var rows = document.querySelectorAll('#courseTable tbody tr');
+    rows.forEach(function(row) {
+        if (!selected || row.getAttribute('data-university') === selected) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

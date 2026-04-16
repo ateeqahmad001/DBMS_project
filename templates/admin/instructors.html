@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Instructors - GyanPustak{% endblock %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">👨‍🏫 Instructors</h1>
+<div class="form-container" style="margin-bottom:2rem;max-width:100%;">
+    <h3>Add Instructor</h3>
+    <form method="POST" action="{{ url_for('admin.add_instructor') }}">
+        <div class="form-row">
+            <div class="form-group"><label>First Name *</label><input type="text" name="first_name" required></div>
+            <div class="form-group"><label>Last Name *</label><input type="text" name="last_name" required></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" name="email"></div>
+            <div class="form-group"><label>University *</label>
+                <select name="university_id" id="inst_uni" required onchange="loadInstDepts()">
+                    <option value="">Select University</option>
+                    {% for u in universities %}<option value="{{ u.id }}">{{ u.name }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group"><label>Department *</label>
+            <select name="department_id" id="inst_dept" required disabled>
+                <option value="">-- Select a university first --</option>
+            </select>
+        </div>
+        <button class="btn btn-primary">Add Instructor →</button>
+    </form>
+</div>
+
+<!-- Filter by University -->
+<div class="filter-bar">
+    <label>Filter by University:</label>
+    <select id="filterUni" onchange="filterInstructors()">
+        <option value="">All Universities</option>
+        {% for u in universities %}<option value="{{ u.name }}">{{ u.name }}</option>{% endfor %}
+    </select>
+</div>
+
+<table class="table" id="instructorTable">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>University</th><th>Department</th><th></th></tr></thead>
+    <tbody>
+    {% for i in instructors %}
+    <tr data-university="{{ i.uni_name }}">
+        <td>{{ i.id }}</td><td style="color:var(--text-primary);font-weight:500;">{{ i.full_name }}</td><td>{{ i.email or '-' }}</td><td>{{ i.uni_name }}</td><td>{{ i.dept_name }}</td>
+        <td><form method="POST" action="{{ url_for('admin.delete_instructor', instr_id=i.id) }}"><button class="btn btn-danger btn-sm">Delete</button></form></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block scripts %}
+<script>
+function loadInstDepts() {
+    var uniId = document.getElementById('inst_uni').value;
+    var deptSelect = document.getElementById('inst_dept');
+    if (!uniId) {
+        deptSelect.innerHTML = '<option value="">-- Select a university first --</option>';
+        deptSelect.disabled = true;
+        return;
+    }
+    fetch('/admin/api/departments/' + uniId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            deptSelect.innerHTML = '<option value="">Select Department</option>';
+            data.forEach(function(d) {
+                var opt = document.createElement('option');
+                opt.value = d.id; opt.textContent = d.name;
+                deptSelect.appendChild(opt);
+            });
+            deptSelect.disabled = false;
+        });
+}
+
+function filterInstructors() {
+    var selected = document.getElementById('filterUni').value;
+    var rows = document.querySelectorAll('#instructorTable tbody tr');
+    rows.forEach(function(row) {
+        if (!selected || row.getAttribute('data-university') === selected) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}
