@@ -6,7 +6,7 @@
 
 ## 🌟 Project Overview
 
-GyanPustak provides a seamless platform where students can browse, buy, or rent textbooks while administrators manage inventory, courses, and support operations. The platform features four distinct user roles — **Student**, **Support**, **Admin**, and **Super Admin** — each with tailored dashboards and permissions.
+GyanPustak provides a seamless platform where students can browse, buy, or rent textbooks while administrators manage inventory, courses, and support operations. The platform features four distinct user roles : **Student**, **Support**, **Admin**, and **Super Admin** — each with tailored dashboards and permissions.
 
 ---
 
@@ -15,7 +15,7 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 ### 👨‍🎓 Student
 - Browse books with **smart search**, filters (category, format, type, price range), and **pagination**
 - View detailed book information including authors, keywords, and course associations
-- **Add to cart** — buy and rent items handled separately
+- **Add to cart** : buy and rent items handled separately
 - **Place orders** with shipping and payment options
 - **Request order cancellation** (before completion)
 - **Track order status** (new → processed → awaiting shipping → shipped → completed)
@@ -30,8 +30,8 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 - **Manage and resolve tickets** with status tracking and history
 
 ### 📦 Admin
-- **Manage books** — add, edit, delete books with full metadata (authors, keywords, subcategories)
-- **Manage inventory** — track stock quantities
+- **Manage books** : add, edit, delete books with full metadata (authors, keywords, subcategories)
+- **Manage inventory** : track stock quantities
 - **Low stock alerts** on the admin dashboard
 - **Manage universities**, departments, courses, and instructors
 - **Link books to courses** (required/recommended)
@@ -40,7 +40,7 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 ### 👑 Super Admin
 - **Add employees** (admin and support roles only)
 - **View all employees** and manage the workforce
-- **Full system control** — access to all admin features
+- **Full system control** : access to all admin features
 - ⚠️ **Only ONE Super Admin exists** in the system (enforced by database trigger)
 
 ### ⚙️ System Features
@@ -51,7 +51,7 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 - **Form validation** on both client and server side
 - **SQL error handling** with meaningful error messages
 - **Order status automation** via database triggers
-- **Ticket history** — automatic logging of status changes
+- **Ticket history** : automatic logging of status changes
 - **Database triggers** for data integrity (university consistency, single cart enforcement, review validation, etc.)
 
 ---
@@ -256,7 +256,3 @@ The database consists of **25+ tables** with proper normalization, foreign keys,
 ## 📄 License
 
 This project is developed for educational purposes.
-
----
-
-**Made with ❤️ by the GyanPustak Team**
