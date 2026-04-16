@@ -8,17 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CA_PATH = BASE_DIR / "certs" / "ca.pem"
 
 
-# def get_db():
-#     return pymysql.connect(
-#         host=Config.MYSQL_HOST,
-#         user=Config.MYSQL_USER,
-#         password=Config.MYSQL_PASSWORD,
-#         database=Config.MYSQL_DB,
-#         port=Config.MYSQL_PORT,
-#         cursorclass=pymysql.cursors.DictCursor,
-#         autocommit=True
-#     )
-
 def get_db():
     connect_args = dict(
         host=Config.MYSQL_HOST,
