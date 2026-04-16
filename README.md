@@ -6,7 +6,7 @@
 
 ## 🌟 Project Overview
 
-GyanPustak provides a seamless platform where students can browse, buy, or rent textbooks while administrators manage inventory, courses, and support operations. The platform features four distinct user roles : **Student**, **Support**, **Admin**, and **Super Admin** — each with tailored dashboards and permissions.
+GyanPustak provides a seamless platform where students can browse, buy, or rent textbooks while administrators manage inventory, courses, and support operations. The platform features four distinct user roles : **Student**, **Support**, **Admin**, and **Super Admin** : each with tailored dashboards and permissions.
 
 ---
 
@@ -226,9 +226,9 @@ MYSQL_PORT=3306
 | Admin 2      | admin2@gyanpustak.com        | Admin@123       |
 | Support 1    | support1@gyanpustak.com      | Support@123     |
 | Support 2    | support2@gyanpustak.com      | Support@123     |
-| Student 1    | student1@gyanpustak.com      | Student@123     |
-| Student 2    | student2@gyanpustak.com      | Student@123     |
-| Student 3    | student3@gyanpustak.com      | Student@123     |
+| Student 1    | student1@example.com      | Student@123     |
+| Student 2    | student2@example.com      | Student@123     |
+| Student 3    | student3@example.com      | Student@123     |
 
 ---
 
