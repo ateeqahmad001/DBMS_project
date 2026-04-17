@@ -32,7 +32,6 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 ### 📦 Admin
 - **Manage books** : add, edit, delete books with full metadata (authors, keywords, subcategories)
 - **Manage inventory** : track stock quantities
-- **Low stock alerts** on the admin dashboard
 - **Manage universities**, departments, courses, and instructors
 - **Link books to courses** (required/recommended)
 - **Handle assigned tickets** and update their status
