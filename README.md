@@ -44,8 +44,6 @@ GyanPustak provides a seamless platform where students can browse, buy, or rent 
 
 ### ⚙️ System Features
 - **Smart search** with keyword matching across titles, authors, ISBNs, and keywords
-- **Pagination** on all list views
-- **Inventory tracking** with automatic stock deduction on order placement
 - **Role-based access control** via decorators and session management
 - **Form validation** on both client and server side
 - **SQL error handling** with meaningful error messages
