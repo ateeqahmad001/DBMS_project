@@ -249,7 +249,3 @@ The database consists of **25+ tables** with proper normalization, foreign keys,
 - University consistency checks for courses, instructors, and departments
 
 ---
-
-## 📄 License
-
-This project is developed for educational purposes.
